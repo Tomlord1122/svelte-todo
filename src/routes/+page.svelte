@@ -6,7 +6,6 @@
 	let newTask = $state<string>('');
 	let newTaskCount = $state<number>(1);
 	let newAward = $state<string>('');
-	let numberOfTasks = $derived(todos.length);
 
 	function addTask() {
 		if (!newTask.trim() || !newAward.trim()) return;
@@ -35,7 +34,7 @@
 				todo.completed = true;
 				setTimeout(() => {
 					todo.showCompletionAnimation = false;
-				}, 2000);
+				}, 1500);
 			}
 		}
 	}
@@ -65,22 +64,15 @@
 					bind:value={newAward}
 					placeholder="媞想要的獎勵"
 					class="w-full rounded-lg border border-gray-300 px-4 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+					onkeypress={handleKeyPress}
 				/>
 			</div>
 			<div class="flex items-center gap-2">
-				<button
-					class="flex h-8 w-8 items-center justify-center rounded-lg bg-gray-200 text-gray-700 transition-colors duration-200 hover:bg-gray-300"
-					onclick={() => (newTaskCount = Math.max(1, newTaskCount - 1))}
-				>
+				<button class="countButton" onclick={() => (newTaskCount = Math.max(1, newTaskCount - 1))}>
 					-
 				</button>
 				<span class="w-12 text-center font-medium">{newTaskCount}</span>
-				<button
-					class="flex h-8 w-8 items-center justify-center rounded-lg bg-gray-200 text-gray-700 transition-colors duration-200 hover:bg-gray-300"
-					onclick={() => (newTaskCount = newTaskCount + 1)}
-				>
-					+
-				</button>
+				<button class="countButton" onclick={() => (newTaskCount = newTaskCount + 1)}> + </button>
 			</div>
 			<button
 				class="rounded-lg bg-blue-500 px-6 py-2 text-white transition-all duration-300 hover:scale-105 hover:bg-blue-600 active:scale-95"
@@ -97,11 +89,15 @@
 					in:fly={{ y: 20 }}
 					out:slide
 				>
+					<!-- The left side content starts here todo or award -->
 					{#if todo.completed}
 						<p class="flex-1 text-lg font-medium text-emerald-500">🏆 {todo.award}</p>
 					{:else}
 						<p class="flex-1 text-lg">{todo.task}</p>
 					{/if}
+					<!-- The left side content ends here todo or award -->
+
+					<!-- The progress star count starts here -->
 					<div class="mr-2 flex gap-1">
 						{#each Array(todo.targetCount) as _, i}
 							{#if i < todo.currentCount}
@@ -111,6 +107,9 @@
 							{/if}
 						{/each}
 					</div>
+					<!-- The star count ends here -->
+
+					<!-- The progress button starts here -->
 					<div class="flex items-center gap-3 rounded-lg bg-white px-4 py-2 shadow-sm">
 						<button
 							class="flex h-8 w-8 items-center justify-center rounded-lg bg-emerald-500 text-white transition-colors duration-200 hover:bg-emerald-600"
@@ -123,20 +122,25 @@
 							{todo.currentCount}/{todo.targetCount}
 						</span>
 					</div>
+					<!-- The progress button ends here -->
+
+					<!-- The delete button starts here -->
 					<button
 						class="flex h-8 w-8 items-center justify-center rounded-lg bg-red-500 text-white transition-colors duration-200 hover:bg-red-600"
 						onclick={() => (todos = todos.filter((t) => t !== todo))}
 					>
 						×
 					</button>
+					<!-- The delete button ends here -->
+
 					{#if todo.showCompletionAnimation}
 						<div
 							class="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50"
-							transition:fade
+							transition:fade={{ duration: 500 }}
 						>
 							<div
 								class="rounded-xl bg-white p-8 shadow-2xl"
-								transition:fly={{ y: 200, duration: 1000 }}
+								transition:fly={{ y: 200, duration: 500 }}
 							>
 								<h2 class="mb-4 text-center text-3xl font-bold text-emerald-500">
 									🎉 妳完成了！ 🎉
