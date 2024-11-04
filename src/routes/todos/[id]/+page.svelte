@@ -20,35 +20,21 @@
 	}
 
 	// Function to add a new task
-	async function addTask() {
-		// Validate input
+	function addTask() {
 		if (!newTask.trim() || !newAward.trim()) return;
-
-		// Prepare the new todo item
-		const newTodo: Omit<TodoItem, 'id'> = {
+		todos.push({
+			id: todos.length + 1,
 			task: newTask,
 			award: newAward,
 			completed: false,
 			targetCount: newTaskCount,
 			currentCount: 0,
 			percentage: 0,
-			showCompletionAnimation: false,
-		};
-
-		try {
-			// Call the createTodo API
-			const createdTodo = await createTodo(newTodo);
-			// Update the local todos array with the newly created todo
-			todos = [...todos, createdTodo];
-
-			// Reset input fields
-			newTask = '';
-			newAward = '';
-			newTaskCount = 1;
-		} catch (error) {
-			console.error('Error adding task:', error);
-			// Optionally, display an error message to the user
-		}
+			showCompletionAnimation: false
+		});
+		newTask = '';
+		newAward = '';
+		newTaskCount = 1;
 	}
 
 	function incrementProgress(todo: TodoItem) {
