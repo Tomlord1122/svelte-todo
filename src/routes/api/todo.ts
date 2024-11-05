@@ -1,4 +1,4 @@
-import type { TodoItem, CreateTodoInput, UpdateTodoInput } from '$lib/types/type.ts';
+import type { TodoItem, CreateTodoInput, UpdateTodoInput } from '$lib/utils/type.js';
 
 const API_BASE = 'http://localhost:8080/api';
 
