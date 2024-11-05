@@ -186,9 +186,9 @@
 							<p class="flex-1 text-lg">{todo.Task}</p>
 							<!-- The progress star count starts here -->
 							<div class="mr-2 flex gap-1">
-								{#each Array(todo.TargetCount) as [, i]}
+								{#each Array(todo.TargetCount) as _value, i}
 									{#if i < todo.CurrentCount}
-										<span class="text-xl">⭐️</span>
+										<span class="text-xl">{_value}⭐️</span>
 									{:else}
 										<span class="text-xl text-gray-300">☆</span>
 									{/if}
