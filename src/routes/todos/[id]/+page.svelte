@@ -1,34 +1,37 @@
 <script lang="ts">
 	import { fade, fly, slide } from 'svelte/transition';
 	import { createTodo, getTodos, updateTodo, deleteTodo } from '../../api/todo.js';
-	import type { CreateTodoInput, TodoItem, UpdateTodoInput, DeleteTodoInput } from '$lib/types/type.js';
+	import type {
+		CreateTodoInput,
+		TodoItem,
+		UpdateTodoInput,
+		DeleteTodoInput
+	} from '$lib/types/type.js';
 	let todos: TodoItem[] = $state([]);
 	let newTask: string = $state('');
 	let newTaskCount: number = $state(1);
 	let newAward: string = $state('');
 	let currentCompletedTodo: TodoItem | null = $state(null);
-	$inspect(todos)
+	$inspect(todos);
 
 	$effect(() => {
 		fetchTodos();
-		return () => {}
-	})
+		return () => {};
+	});
 	async function fetchTodos() {
 		try {
 			const fetchedTodos = await getTodos();
 			todos = fetchedTodos;
-			todos = fetchedTodos.map(todo => ({ ...todo, ShowCompletionAnimation: false}));
+			todos = fetchedTodos.map((todo) => ({ ...todo, ShowCompletionAnimation: false }));
 		} catch (error) {
 			console.error('Error fetching todos:', error);
 		}
 	}
 
-
-
 	// Function to add a new task
 	async function addTask() {
 		if (!newTask.trim() || !newAward.trim()) return;
-		
+
 		try {
 			const newTodoItem: CreateTodoInput = {
 				Task: newTask,
@@ -37,14 +40,14 @@
 				TargetCount: newTaskCount,
 				CurrentCount: 0,
 				Percentage: 0,
-				ShowCompletionAnimation: false,
+				ShowCompletionAnimation: false
 			};
 			console.log(JSON.stringify(newTodoItem));
 			const createdTodo = await createTodo(newTodoItem);
-			
+
 			// Update the local todos array with the response from the server
 			todos = [...todos, createdTodo];
-			
+
 			// Reset the form
 			newTask = '';
 			newAward = '';
@@ -69,7 +72,6 @@
 				}, 1500);
 			}
 
-
 			// Optionally, you can update the backend here if needed
 			const updateTodoInput: UpdateTodoInput = {
 				id: todo.ID ?? '',
@@ -77,20 +79,19 @@
 				TargetCount: todo.TargetCount,
 				CurrentCount: todo.CurrentCount,
 				Percentage: todo.Percentage,
-				ShowCompletionAnimation: todo.ShowCompletionAnimation,
+				ShowCompletionAnimation: todo.ShowCompletionAnimation
 			};
 			await updateTodo(updateTodoInput.id, updateTodoInput);
-
 		}
 	}
 
 	// Function to delete a task
 	async function deleteTask(todo: TodoItem) {
 		const deleteTodoInput: DeleteTodoInput = {
-			id: todo.ID ?? '',
+			id: todo.ID ?? ''
 		};
 		await deleteTodo(deleteTodoInput.id);
-		todos = todos.filter(t => t !== todo);
+		todos = todos.filter((t) => t !== todo);
 	}
 
 	function handleKeyPress(event: KeyboardEvent) {
@@ -99,16 +100,24 @@
 </script>
 
 <main class="min-h-screen bg-gradient-to-br from-amber-100 to-violet-50 p-8">
-	<div class="flex  justify-between ">
+	<div class="flex justify-between">
 		<!-- Completed Todos Section -->
-		<div class="rounded-2xl w-1/4 bg-slate-50 p-6 shadow-2xl hover:scale-105 transition-all duration-300 flex flex-col h-full items-center" in:fade={{ duration: 300 }} out:fade={{ duration: 300 }}>
-			<h2 class="text-2xl font-bold mb-4 sticky top-0 bg-slate-50">完成的獎勵</h2>
-			{#each todos.filter(todo => todo.Completed) as completedTodo (completedTodo.ID)}
-				<div class="flex items-center justify-between rounded-lg bg-gray-100 mb-2 max-w-80 overflow-x-auto w-full" in:fly={{ y: 20, duration: 300 }} out:fly={{ y: -20, duration: 150 }}>
+		<div
+			class="flex h-full w-1/4 flex-col items-center rounded-2xl bg-slate-50 p-6 shadow-2xl transition-all duration-300 hover:scale-105"
+			in:fade={{ duration: 300 }}
+			out:fade={{ duration: 300 }}
+		>
+			<h2 class="sticky top-0 mb-4 bg-slate-50 text-2xl font-bold">完成的獎勵</h2>
+			{#each todos.filter((todo) => todo.Completed) as completedTodo (completedTodo.ID)}
+				<div
+					class="mb-2 flex w-full max-w-80 items-center justify-between overflow-x-auto rounded-lg bg-gray-100"
+					in:fly={{ y: 20, duration: 300 }}
+					out:fly={{ y: -20, duration: 150 }}
+				>
 					<p class="text-lg text-emerald-500">🏆 {completedTodo.Award}</p>
 					<div class="flex items-center">
 						<button
-							class="flex h-10 w-10 items-center justify-center rounded-lg bg-red-500 text-white transition-colors duration-200 hover:bg-red-600 ml-2"
+							class="ml-2 flex h-10 w-10 items-center justify-center rounded-lg bg-red-500 text-white transition-colors duration-200 hover:bg-red-600"
 							onclick={() => deleteTask(completedTodo)}
 						>
 							×
@@ -118,11 +127,15 @@
 			{/each}
 		</div>
 		<!-- Main Todo Section -->
-		<div class="flex-shrink-0 mx-auto max-w-2xl rounded-xl bg-slate-50 p-8 shadow-2xl hover:scale-105 transition-all duration-300 h-full">
-			<h1 class="mb-8 bg-clip-text text-center text-4xl font-bold text-transparent text-zinc-900 font-serif">
+		<div
+			class="mx-auto h-full max-w-2xl flex-shrink-0 rounded-xl bg-slate-50 p-8 shadow-2xl transition-all duration-300 hover:scale-105"
+		>
+			<h1
+				class="mb-8 bg-clip-text text-center font-serif text-4xl font-bold text-transparent text-zinc-900"
+			>
 				🏆 Kai Tea Challenge 🏆
 			</h1>
-	
+
 			<div class="mb-8 flex gap-4">
 				<div class="flex-1 space-y-2">
 					<input
@@ -141,12 +154,18 @@
 					/>
 				</div>
 				<div class="flex items-center gap-2">
-					<button class=" text-xl flex h-8 w-8 items-center justify-center rounded-lg text-gray-700  hover:bg-gray-200 hover:scale-110 duration-300 transition-all" onclick={() => (newTaskCount = Math.max(1, newTaskCount - 1))}>
+					<button
+						class=" flex h-8 w-8 items-center justify-center rounded-lg text-xl text-gray-700 transition-all duration-300 hover:scale-110 hover:bg-gray-200"
+						onclick={() => (newTaskCount = Math.max(1, newTaskCount - 1))}
+					>
 						-
 					</button>
-					<span class="w-12 text-center font-bold text-xl">{newTaskCount}</span>
-					<button class=" text-xl flex h-8 w-8 items-center justify-center rounded-lg text-gray-700  hover:bg-gray-200 hover:scale-110 duration-300 transition-all" onclick={() => (newTaskCount = newTaskCount + 1)}> 
-						+ 
+					<span class="w-12 text-center text-xl font-bold">{newTaskCount}</span>
+					<button
+						class=" flex h-8 w-8 items-center justify-center rounded-lg text-xl text-gray-700 transition-all duration-300 hover:scale-110 hover:bg-gray-200"
+						onclick={() => (newTaskCount = newTaskCount + 1)}
+					>
+						+
 					</button>
 				</div>
 				<button
@@ -167,7 +186,7 @@
 							<p class="flex-1 text-lg">{todo.Task}</p>
 							<!-- The progress star count starts here -->
 							<div class="mr-2 flex gap-1">
-								{#each Array(todo.TargetCount) as _, i}
+								{#each Array(todo.TargetCount) as [, i]}
 									{#if i < todo.CurrentCount}
 										<span class="text-xl">⭐️</span>
 									{:else}
@@ -183,7 +202,7 @@
 									onclick={() => incrementProgress(todo)}
 									disabled={todo.Completed}
 								>
-									+ 
+									+
 								</button>
 								<span class="w-16 text-center font-medium">
 									{todo.CurrentCount}/{todo.TargetCount}
@@ -197,36 +216,27 @@
 							>
 								×
 							</button>
-
 						</div>
 					{/if}
-				
 				{/each}
 			</div>
 		</div>
 		<!-- The delete button ends here -->
-		{#if currentCompletedTodo?.ShowCompletionAnimation }
-		<div
-			class="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-80"
-			transition:fade={{ duration: 500 }}
-	>
-		<div
-			class="rounded-xl bg-white p-8 shadow-2xl"
-			transition:fly={{ y: 0, duration: 500 }}
-		>
-			<h2 class="mb-4 text-center text-4xl font-bold text-emerald-500">
-				🎉 妳完成了！ 🎉
-			</h2>
-			<p class="mb-4 text-center text-2xl text-gray-600">
-				恭喜完成 "{currentCompletedTodo?.Task}"！
-			</p>
-			<p class="text-center text-3xl font-bold text-emerald-500">
-				可以跟齊索取: {currentCompletedTodo?.Award} 🏆
-			</p>
-		</div>
+		{#if currentCompletedTodo?.ShowCompletionAnimation}
+			<div
+				class="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-80"
+				transition:fade={{ duration: 500 }}
+			>
+				<div class="rounded-xl bg-white p-8 shadow-2xl" transition:fly={{ y: 0, duration: 500 }}>
+					<h2 class="mb-4 text-center text-4xl font-bold text-emerald-500">🎉 妳完成了！ 🎉</h2>
+					<p class="mb-4 text-center text-2xl text-gray-600">
+						恭喜完成 "{currentCompletedTodo?.Task}"！
+					</p>
+					<p class="text-center text-3xl font-bold text-emerald-500">
+						可以跟齊索取: {currentCompletedTodo?.Award} 🏆
+					</p>
+				</div>
 			</div>
 		{/if}
-
 	</div>
-	
 </main>

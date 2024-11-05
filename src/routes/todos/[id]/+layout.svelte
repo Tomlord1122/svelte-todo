@@ -5,4 +5,3 @@
 <nav>
 	{@render children()}
 </nav>
-

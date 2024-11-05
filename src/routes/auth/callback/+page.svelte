@@ -17,7 +17,6 @@
 				set(user);
 				const cookieString = `auth_token=${user.accessToken}; path=/; domain=localhost; max-age=86400; SameSite=None`;
 				document.cookie = cookieString;
-
 			},
 			logout: () => {
 				set(null);
