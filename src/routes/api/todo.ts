@@ -1,4 +1,4 @@
-import type { TodoItem, CreateTodoInput } from '$lib/types/type.ts';
+import type { TodoItem, CreateTodoInput, UpdateTodoInput } from '$lib/types/type.ts';
 
 const API_BASE = 'http://localhost:8080/api';
 
@@ -43,9 +43,12 @@ export async function createTodo(todo: CreateTodoInput): Promise<TodoItem> {
     return response.json();
 }
 
-export async function updateTodo(id: string, todo: Partial<TodoItem>): Promise<TodoItem> {
+export async function updateTodo(id: string, todo: UpdateTodoInput): Promise<TodoItem> {
     const response = await fetchWithAuth(`${API_BASE}/todos/${id}`, {
         method: 'PUT',
+        headers: {
+            'Content-Type': 'application/json'
+        },
         body: JSON.stringify(todo),
     });
     return response.json();

@@ -15,16 +15,29 @@ export interface AuthState{
 
 
 export interface CreateTodoInput {
-    task: string;
-    award: string;
-    completed: boolean;
-    targetCount: number;
-    currentCount: number;
-    percentage: number;
-    showCompletionAnimation: boolean;
+    Task: string;
+    Award: string;
+    Completed: boolean;
+    TargetCount: number;
+    CurrentCount: number;
+    Percentage: number;
+    ShowCompletionAnimation: boolean;
+}
+
+export interface UpdateTodoInput {
+    id: string;
+    Completed: boolean;
+    TargetCount: number;
+    CurrentCount: number;
+    Percentage: number;
+    ShowCompletionAnimation: boolean;
+}
+
+export interface DeleteTodoInput {
+    id: string;
 }
 
 export interface TodoItem extends CreateTodoInput {
-    id?: string;
-    userID: number;
+    ID?: string;
+    UserID: number;
 }
