@@ -6,7 +6,7 @@
 		TodoItem,
 		UpdateTodoInput,
 		DeleteTodoInput
-	} from '$lib/types/type.js';
+	} from '$lib/utils/type.js';
 	let todos: TodoItem[] = $state([]);
 	let newTask: string = $state('');
 	let newTaskCount: number = $state(1);

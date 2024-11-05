@@ -1,6 +1,6 @@
 import type { TodoItem, CreateTodoInput, UpdateTodoInput } from '$lib/utils/type.js';
-
-const API_BASE = 'http://localhost:8080/api';
+import { PUBLIC_BACKEND_URL } from '$env/static/public';
+const API_BASE = PUBLIC_BACKEND_URL + '/api';
 
 async function fetchWithAuth(url: string, options: RequestInit = {}) {
 	const response = await fetch(url, {

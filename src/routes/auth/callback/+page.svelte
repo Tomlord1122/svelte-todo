@@ -1,6 +1,7 @@
 <script lang="ts">
 	import { goto } from '$app/navigation';
 	import { writable } from 'svelte/store';
+	import { PUBLIC_BACKEND_URL } from '$env/static/public';
 	interface User {
 		id: string;
 		username: string;
@@ -15,7 +16,7 @@
 			subscribe,
 			login: (user: User) => {
 				set(user);
-				const cookieString = `auth_token=${user.accessToken}; path=/; domain=localhost; max-age=86400; SameSite=None`;
+				const cookieString = `auth_token=${user.accessToken}; path=/; domain=${PUBLIC_BACKEND_URL}; max-age=86400; SameSite=None`;
 				document.cookie = cookieString;
 			},
 			logout: () => {

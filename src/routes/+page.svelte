@@ -1,6 +1,7 @@
 <script lang="ts">
+	import { PUBLIC_BACKEND_URL } from '$env/static/public';
 	async function handleGoogleLogin() {
-		window.location.href = 'http://localhost:8080/auth/google';
+		window.location.href = `${PUBLIC_BACKEND_URL}/auth/google`;
 	}
 </script>
 
