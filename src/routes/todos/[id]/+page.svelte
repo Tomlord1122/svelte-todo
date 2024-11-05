@@ -6,9 +6,13 @@
 	let newTask: string = $state('');
 	let newTaskCount: number = $state(1);
 	let newAward: string = $state('');
-
-	let completeTodoItem = $state<TodoItem | null>(null);
+	let currentCompletedTodo: TodoItem | null = $state(null);
 	$inspect(todos)
+
+	$effect(() => {
+		fetchTodos();
+		return () => {}
+	})
 	async function fetchTodos() {
 		try {
 			const fetchedTodos = await getTodos();
@@ -19,10 +23,7 @@
 		}
 	}
 
-	$effect(() => {
-		fetchTodos();
-		return () => {}
-	})
+
 
 	// Function to add a new task
 	async function addTask() {
@@ -61,8 +62,10 @@
 			if (todo.Percentage === 100) {
 				todo.ShowCompletionAnimation = true;
 				todo.Completed = true;
+				currentCompletedTodo = todo;
 				setTimeout(() => {
-					todo.ShowCompletionAnimation = false;
+					currentCompletedTodo!.ShowCompletionAnimation = false;
+					currentCompletedTodo = null;
 				}, 1500);
 			}
 
@@ -101,7 +104,7 @@
 		<div class="rounded-2xl w-1/4 bg-slate-50 p-6 shadow-2xl hover:scale-105 transition-all duration-300 flex flex-col h-full items-center" in:fade={{ duration: 300 }} out:fade={{ duration: 300 }}>
 			<h2 class="text-2xl font-bold mb-4 sticky top-0 bg-slate-50">完成的獎勵</h2>
 			{#each todos.filter(todo => todo.Completed) as completedTodo (completedTodo.ID)}
-				<div class="flex items-center justify-between rounded-lg bg-gray-100 mb-2 max-w-80 overflow-x-auto w-full" in:fly={{ y: 20, duration: 300 }} out:fly={{ y: -20, duration: 300 }}>
+				<div class="flex items-center justify-between rounded-lg bg-gray-100 mb-2 max-w-80 overflow-x-auto w-full" in:fly={{ y: 20, duration: 300 }} out:fly={{ y: -20, duration: 150 }}>
 					<p class="text-lg text-emerald-500">🏆 {completedTodo.Award}</p>
 					<div class="flex items-center">
 						<button
@@ -116,8 +119,8 @@
 		</div>
 		<!-- Main Todo Section -->
 		<div class="flex-shrink-0 mx-auto max-w-2xl rounded-xl bg-slate-50 p-8 shadow-2xl hover:scale-105 transition-all duration-300 h-full">
-			<h1 class="mb-8 bg-clip-text text-center text-4xl font-bold text-transparent text-zinc-900">
-				獎勵大挑戰
+			<h1 class="mb-8 bg-clip-text text-center text-4xl font-bold text-transparent text-zinc-900 font-serif">
+				🏆 Kai Tea Challenge 🏆
 			</h1>
 	
 			<div class="mb-8 flex gap-4">
@@ -197,31 +200,32 @@
 
 						</div>
 					{/if}
-					<!-- The delete button ends here -->
-					{#if todo.ShowCompletionAnimation }
-						<div
-							class="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-80"
-							transition:fade={{ duration: 500 }}
-					>
-						<div
-							class="rounded-xl bg-white p-8 shadow-2xl"
-							transition:fly={{ y: 0, duration: 500 }}
-						>
-							<h2 class="mb-4 text-center text-4xl font-bold text-emerald-500">
-								🎉 妳完成了！ 🎉
-							</h2>
-							<p class="mb-4 text-center text-2xl text-gray-600">
-								恭喜完成 "{todo.Task}"！
-							</p>
-							<p class="text-center text-3xl font-bold text-emerald-500">
-								可以跟齊索取: {todo.Award} 🏆
-							</p>
-						</div>
-					</div>
-				{/if}
+				
 				{/each}
 			</div>
 		</div>
+		<!-- The delete button ends here -->
+		{#if currentCompletedTodo?.ShowCompletionAnimation }
+		<div
+			class="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-80"
+			transition:fade={{ duration: 500 }}
+	>
+		<div
+			class="rounded-xl bg-white p-8 shadow-2xl"
+			transition:fly={{ y: 0, duration: 500 }}
+		>
+			<h2 class="mb-4 text-center text-4xl font-bold text-emerald-500">
+				🎉 妳完成了！ 🎉
+			</h2>
+			<p class="mb-4 text-center text-2xl text-gray-600">
+				恭喜完成 "{currentCompletedTodo?.Task}"！
+			</p>
+			<p class="text-center text-3xl font-bold text-emerald-500">
+				可以跟齊索取: {currentCompletedTodo?.Award} 🏆
+			</p>
+		</div>
+			</div>
+		{/if}
 
 	</div>
 	
