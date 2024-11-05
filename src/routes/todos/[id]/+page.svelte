@@ -1,40 +1,54 @@
 <script lang="ts">
-	import type { TodoItem } from '$lib/types/type.js';
 	import { fade, fly, slide } from 'svelte/transition';
 	import { createTodo, getTodos } from '../../api/todo.js';
+	import type { CreateTodoInput, TodoItem } from '$lib/types/type.js';
 	let todos: TodoItem[] = $state([]);
 	let newTask: string = $state('');
 	let newTaskCount: number = $state(1);
 	let newAward: string = $state('');
 	
-	$inspect(todos);
-
 	async function fetchTodos() {
 		try {
 			const fetchedTodos = await getTodos();
 			todos = fetchedTodos;
-			
+			console.log(todos);
 		} catch (error) {
 			console.error('Error fetching todos:', error);
 		}
 	}
 
+	$effect(() => {
+		fetchTodos();
+		return () => {}
+	})
+
 	// Function to add a new task
-	function addTask() {
+	async function addTask() {
 		if (!newTask.trim() || !newAward.trim()) return;
-		todos.push({
-			id: todos.length + 1,
-			task: newTask,
-			award: newAward,
-			completed: false,
-			targetCount: newTaskCount,
-			currentCount: 0,
-			percentage: 0,
-			showCompletionAnimation: false
-		});
-		newTask = '';
-		newAward = '';
-		newTaskCount = 1;
+		
+		try {
+			const newTodoItem: CreateTodoInput = {
+				task: newTask,
+				award: newAward,
+				completed: false,
+				targetCount: newTaskCount,
+				currentCount: 0,
+				percentage: 0,
+				showCompletionAnimation: false,
+			};
+			console.log(JSON.stringify(newTodoItem));
+			const createdTodo = await createTodo(newTodoItem);
+			
+			// Update the local todos array with the response from the server
+			todos = [...todos, createdTodo];
+			
+			// Reset the form
+			newTask = '';
+			newAward = '';
+			newTaskCount = 1;
+		} catch (error) {
+			console.error('Failed to create todo:', error);
+		}
 	}
 
 	function incrementProgress(todo: TodoItem) {

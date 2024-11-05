@@ -1,16 +1,6 @@
-export type TodoItem = {
-    id: number;
-    task: string;
-    award: string;
-    completed: boolean;
-    targetCount: number;
-    currentCount: number;
-    percentage: number;
-    showCompletionAnimation: boolean;
-}
 
 export interface User {
-    id: string;
+    id: number;
     email: string;
     name: string;
     todos: TodoItem[];
@@ -24,3 +14,17 @@ export interface AuthState{
 
 
 
+export interface CreateTodoInput {
+    task: string;
+    award: string;
+    completed: boolean;
+    targetCount: number;
+    currentCount: number;
+    percentage: number;
+    showCompletionAnimation: boolean;
+}
+
+export interface TodoItem extends CreateTodoInput {
+    id?: string;
+    userID: number;
+}

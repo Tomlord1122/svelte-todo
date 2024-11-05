@@ -1,4 +1,4 @@
-import type { TodoItem } from '$lib/types/type.ts'
+import type { TodoItem, CreateTodoInput } from '$lib/types/type.ts';
 
 const API_BASE = 'http://localhost:8080/api';
 
@@ -27,11 +27,19 @@ export async function getTodos(): Promise<TodoItem[]> {
     return response.json();
 }
 
-export async function createTodo(todo: Omit<TodoItem, 'id'>): Promise<TodoItem> {
+export async function createTodo(todo: CreateTodoInput): Promise<TodoItem> {
     const response = await fetchWithAuth(`${API_BASE}/todos`, {
         method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
         body: JSON.stringify(todo),
     });
+
+    if (!response.ok) {
+        throw new Error('Failed to create todo');
+    }
+
     return response.json();
 }
 
